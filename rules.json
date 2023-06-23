@@ -1,0 +1,27 @@
+[
+	{
+		"id": 1,
+		"action": { 
+			"type": "allow" 
+		},
+		"condition": { 
+			"urlFilter": "https://www.google.com/search?q=python+*", 
+			"resourceTypes": ["main_frame"] 
+		}
+	},
+	{
+		"id": 2,
+		"action": {
+			"type": "redirect",
+			"redirect": {
+				"regexSubstitution": "https://www.google.com/search?q=python+\\1"
+			}
+		},
+		"condition": {
+			"regexFilter": "^https:\\/\\/www\\.google\\.com\\/search\\?q=(...)",
+			"resourceTypes": [
+				"main_frame"
+			]
+		}
+  	}
+]
