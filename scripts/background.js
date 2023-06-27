@@ -1,11 +1,27 @@
-console.log("Hello, World");
+addEventListener("DOMContentLoaded", (event) => {
+    var button = document.getElementById("submit");
+    var input = document.getElementById("appendText");
 
-updateRules("javascript")
-sleep(10)
-updateRules("python")
+    chrome.storage.local.get("appendText", (res) => {
+        input.value = res.appendText;
+    });
 
-function updateRules(language) {
-    console.log(`updating to ${language}`)
+    input.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("submit").click();
+        }
+    });
+
+    button.addEventListener("click", () => {
+        appendText = input.value;
+        updateRules(input.value)
+    })
+});
+
+function updateRules(text) {
+    console.log(`updating to ${text}`)
+    chrome.storage.local.set({"appendText": text})
     chrome.declarativeNetRequest.updateDynamicRules(
         {
             removeRuleIds: [1, 2],
@@ -16,7 +32,7 @@ function updateRules(language) {
                         "type": "allow" 
                     },
                     "condition": {
-                        "urlFilter": `https://www.google.com/search?q=${language}+*`,
+                        "urlFilter": `https://www.google.com/search?q=${text}+*`,
                         "resourceTypes": [
                             "main_frame"
                         ] 
@@ -27,7 +43,7 @@ function updateRules(language) {
                     "action": { 
                         "type": "redirect", 
                         "redirect": {
-                            "regexSubstitution": `https://www.google.com/search?q=${language}+\\1`
+                            "regexSubstitution": `https://www.google.com/search?q=${text}+\\1`
                         } 
                     },
                     "condition": {
@@ -41,3 +57,4 @@ function updateRules(language) {
         },
     )
 }
+
